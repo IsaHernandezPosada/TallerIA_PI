@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <h2>Movie Recommendation</h2>
+    <form action="{% url 'recommendation' %}">
+        <div class="mb-3">
+            <label for="prompt" class="form-label">Describe the kind of movie you want:</label>
+            <input type="text" class="form-control" name="prompt" value="{{ prompt|default:'' }}" placeholder="e.g. película de terror"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Recommend</button>
+    </form>
+
+    {% if prompt and best_movie %}
+    <hr>
+    <p>Searching for: <strong>{{ prompt }}</strong></p>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card">
+                <img src="{{ best_movie.image.url }}" class="card-img-top" alt="{{ best_movie.title }}">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ best_movie.title }}</h5>
+                    <p class="card-text">{{ best_movie.description }}</p>
+                    <p class="card-text"><small class="text-muted">Similarity: {{ similarity_score|floatformat:4 }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif prompt %}
+    <p>No recommendation found.</p>
+    {% endif %}
+</div>
+
+{% endblock content %}
