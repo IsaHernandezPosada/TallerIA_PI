@@ -14,8 +14,8 @@ class Command(BaseCommand):
         client = OpenAI(api_key=os.environ.get('openai_apikey'))
 
         # ✅ Change these titles for any movies you want to compare
-        movie1 = Movie.objects.get(title="La lista de Schindler")
-        movie2 = Movie.objects.get(title="El club de la pelea")
+        movie1 = Movie.objects.get(title="Frankenstein")
+        movie2 = Movie.objects.get(title="Cinderella")
 
         def get_embedding(text):
             response = client.embeddings.create(
@@ -36,7 +36,7 @@ class Command(BaseCommand):
         self.stdout.write(f"\U0001F3AC Similaridad entre '{movie1.title}' y '{movie2.title}': {similarity:.4f}")
 
         # ✅ Optional: Compare against a prompt
-        prompt = "película sobre la Segunda Guerra Mundial"
+        prompt = "película de terror"
         prompt_emb = get_embedding(prompt)
 
         sim_prompt_movie1 = cosine_similarity(prompt_emb, emb1)
@@ -44,3 +44,12 @@ class Command(BaseCommand):
 
         self.stdout.write(f"\U0001F4DD Similitud prompt vs '{movie1.title}': {sim_prompt_movie1:.4f}")
         self.stdout.write(f"\U0001F4DD Similitud prompt vs '{movie2.title}': {sim_prompt_movie2:.4f}")
+
+        # ✅ Bonus: mostrar el embedding de una película al azar
+        import random
+        random_movie = random.choice(list(Movie.objects.all()))
+        random_embedding = get_embedding(random_movie.description)
+
+        self.stdout.write(f"\n🎲 Película al azar: '{random_movie.title}'")
+        self.stdout.write(f"📐 Dimensión del embedding: {len(random_embedding)}")
+        self.stdout.write(f"🔢 Embedding: {random_embedding}")
